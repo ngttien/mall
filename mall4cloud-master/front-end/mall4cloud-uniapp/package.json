@@ -1,0 +1,102 @@
+{
+  "name": "mall4cloud",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev:h5": "uni",
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "dev:mp-weixin-test": "uni -p mp-weixin --mode testing",
+    "build:app-android": "uni build -p app-android",
+    "build:app-android-test": "uni build -p app-android --mode testing --outDir=./dist/test/app",
+    "build:app-ios": "uni build -p app-ios",
+    "build:h5": "uni build",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "build:mp-weixin-test": "uni build -p mp-weixin --mode testing --outDir=./dist/test/mp-weixin",
+    "lint": "eslint --ext .js,.vue src",
+    "lint:fix": "eslint --fix --ext .js --ext .jsx --ext .vue src",
+    "lint:staged": "lint-staged"
+  },
+  "dependencies": {
+    "@babel/eslint-parser": "7.28.6",
+    "@dcloudio/uni-app": "3.0.0-5000720260410001",
+    "@dcloudio/uni-app-plus": "3.0.0-5000720260410001",
+    "@dcloudio/uni-components": "3.0.0-5000720260410001",
+    "@dcloudio/uni-h5": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-alipay": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-baidu": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-jd": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-kuaishou": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-lark": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-qq": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-toutiao": "3.0.0-5000720260410001",
+    "@dcloudio/uni-mp-weixin": "3.0.0-5000720260410001",
+    "@dcloudio/uni-quickapp-webview": "3.0.0-5000720260410001",
+    "@uni-ui/code-ui": "1.5.3",
+    "big.js": "6.2.1",
+    "crypto-js": "4.2.0",
+    "js-base64": "3.7.5",
+    "moment": "2.30.1",
+    "uni-crazy-router": "1.1.3",
+    "uni-vite-plugin-h5-prod-effect": "1.0.1",
+    "video.js": "8.23.8",
+    "videojs-flvjs-es6": "1.0.1",
+    "vite-plugin-compression2": "2.5.3",
+    "vue": "3.4.21",
+    "vue-i18n": "9.1.9"
+  },
+  "devDependencies": {
+    "@dcloudio/types": "3.4.28",
+    "@dcloudio/uni-automator": "3.0.0-5000720260410001",
+    "@dcloudio/uni-cli-shared": "3.0.0-5000720260410001",
+    "@dcloudio/uni-stacktracey": "3.0.0-5000720260410001",
+    "@dcloudio/vite-plugin-uni": "3.0.0-5000720260410001",
+    "@vitejs/plugin-legacy": "4.1.1",
+    "eslint": "8.57.1",
+    "eslint-config-standard": "17.1.0",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-n": "16.6.2",
+    "eslint-plugin-promise": "6.6.0",
+    "eslint-plugin-vue": "9.33.0",
+    "eslint-plugin-vue-scoped-css": "2.8.0",
+    "lint-staged": "15.5.2",
+    "sass": "1.77.4",
+    "terser": "5.46.2",
+    "unplugin-auto-import": "19.1.0",
+    "unplugin-vue-components": "28.0.0",
+    "vite": "7.3.2",
+    "vue-eslint-parser": "9.4.3"
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "eslint --fix"
+    ]
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0",
+    "pnpm": ">=8 <11"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "core-js",
+      "esbuild",
+      "vue-demi"
+    ],
+    "overrides": {
+      "rollup": "4.60.2",
+      "esbuild": "0.27.7",
+      "@vitejs/plugin-vue": "6.0.6",
+      "@vitejs/plugin-vue-jsx": "5.1.5"
+    },
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/core*",
+        "jest-environment-node*",
+        "postcss*",
+        "regenerator-runtime*",
+        "url*",
+        "jest*"
+      ]
+    }
+  }
+}

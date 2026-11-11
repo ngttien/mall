@@ -1,0 +1,102 @@
+package com.mall4j.cloud.biz.service.impl;
+
+import cn.hutool.core.util.StrUtil;
+import com.mall4j.cloud.biz.config.MinioTemplate;
+import com.mall4j.cloud.biz.mapper.AttachFileMapper;
+import com.mall4j.cloud.biz.model.AttachFile;
+import com.mall4j.cloud.biz.service.AttachFileService;
+import com.mall4j.cloud.biz.vo.AttachFileVO;
+import com.mall4j.cloud.common.database.dto.PageDTO;
+import com.mall4j.cloud.common.database.util.PageUtil;
+import com.mall4j.cloud.common.database.vo.PageVO;
+import com.mall4j.cloud.common.exception.Mall4cloudException;
+import com.mall4j.cloud.common.security.AuthUserContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * 上传文件记录表
+ *
+ * @author YXF
+ * @date 2020-11-21 10:21:40
+ */
+@Service
+public class AttachFileServiceImpl implements AttachFileService {
+
+    private static final Logger log = LoggerFactory.getLogger(AttachFileServiceImpl.class);
+
+    @Autowired
+    private AttachFileMapper attachFileMapper;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private MinioTemplate minioTemplate;
+
+    @Override
+    public PageVO<AttachFileVO> page(PageDTO pageDTO, String fileName, Long fileGroupId) {
+        return PageUtil.doPage(pageDTO, () -> attachFileMapper.list(fileName, AuthUserContext.get().getTenantId(), fileGroupId));
+    }
+
+    @Override
+    public void save(List<AttachFile> attachFiles) {
+        attachFileMapper.save(attachFiles, AuthUserContext.get().getTenantId());
+    }
+
+    @Override
+    public void update(AttachFile attachFile) {
+        attachFileMapper.update(attachFile);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteById(Long fileId) {
+        AttachFile attachFile = getOwnFile(fileId);
+        deleteFile(attachFile.getFilePath());
+        attachFileMapper.deleteById(fileId);
+    }
+
+    @Override
+    public Boolean updateFileName(AttachFile attachFile) {
+        if (Objects.isNull(attachFile.getFileName()) && Objects.isNull(attachFile.getAttachFileGroupId())) {
+            return Boolean.TRUE;
+        }
+        getOwnFile(attachFile.getFileId());
+        attachFileMapper.update(attachFile);
+        return Boolean.TRUE;
+    }
+
+    private AttachFile getOwnFile(Long fileId) {
+        AttachFile attachFile = attachFileMapper.getById(fileId);
+        if (attachFile == null || !Objects.equals(attachFile.getShopId(), AuthUserContext.get().getTenantId())) {
+            throw new Mall4cloudException("文件不存在");
+        }
+        return attachFile;
+    }
+
+    /**
+     * 根据文件路径，删除文件
+     * @param filePath 文件路径
+     */
+    public void deleteFile(String filePath){
+        if (StrUtil.isBlank(filePath)) {
+            return;
+        }
+        String objectName = filePath.charAt(0) == '/' ? filePath.substring(1) : filePath;
+        if (StrUtil.isBlank(objectName)) {
+            return;
+        }
+        try {
+            minioTemplate.removeObject(objectName);
+        } catch (Exception e) {
+            log.error("删除文件失败, filePath={}", filePath, e);
+        }
+    }
+}
